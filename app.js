@@ -210,7 +210,19 @@ function crearGraficosMensuales(datos) {
         xaxis: { categories: cats }, colors: ['#1D4ED8']
     }).render();
 
-    document.querySelector("#graficoMensualExternal").innerHTML = ""; // Corregido ID
+// REEMPLAZO SEGURO EN TU FUNCIÓN crearGraficosMensuales()
+const contExtOld = document.querySelector("#graficoMensualExternal");
+if (contExtOld) contExtOld.innerHTML = "";
+
+const contExt = document.querySelector("#graficoMensualExterno");
+if (contExt) {
+    contExt.innerHTML = "";
+    new ApexCharts(contExt, {
+        ...confBase, chart: { ...confBase.chart, type: 'area' },
+        series: [{ name: 'Externo RUNT', data: ordenados.map(k => meses[k].ext) }],
+        xaxis: { categories: cats }, colors: ['#FF0793']
+    }).render();
+}
     const contExt = document.querySelector("#graficoMensualExterno");
     if (contExt) {
         contExt.innerHTML = "";
