@@ -69,7 +69,6 @@
         <div class="grafico-box full-width">
             <div class="grafico-header">
                 <h2>📈 Proyección: Total Recaudo General por Mes (<span class="txt-periodo">Histórico Vigencias</span>)</h2>
-            
             </div>
             <div id="graficoMensual"></div>
         </div>
@@ -77,7 +76,6 @@
         <div class="grafico-box full-width">
             <div class="grafico-header">
                 <h2>🔹 Proyección: Recaudo Interno OT (<span class="txt-periodo">Histórico Vigencias</span>)</h2>
-           
             </div>
             <div id="graficoMensualInterno"></div>
         </div>
@@ -85,7 +83,6 @@
         <div class="grafico-box full-width">
             <div class="grafico-header">
                 <h2>🔹 Proyección: Recaudo Externo RUNT (<span class="txt-periodo">Histórico Vigencias</span>)</h2>
-          
             </div>
             <div id="graficoMensualExterno"></div>
         </div>
@@ -115,7 +112,6 @@
         <div class="grafico-box full-width" style="margin-top: 30px;">
             <div class="grafico-header">
                 <h2>🧮 Distribución de Registro de Parque Automotor (<span class="txt-periodo">Histórico Vigencias</span>)</h2>
-               
             </div>
             <div id="graficoParqueBarras"></div>
         </div>
@@ -172,11 +168,11 @@
         <div class="filtros-container">
             <div class="filtro-grupo">
                 <label>Filtrar por Año/Mes:</label>
-                <input type="month" id="filtroMesAnio" onchange="aplicarFiltrosTabla()">
+                <input type="month" id="filtroMesAnio" onchange="aplicarFiltrosTabla(DATOS_GLOBALES)">
             </div>
             <div class="filtro-grupo">
                 <label>Buscar por Nombre de Trámite:</label>
-                <input type="text" id="buscarTramite" placeholder="Ej: Matrícula..." oninput="aplicarFiltrosTabla()">
+                <input type="text" id="buscarTramite" placeholder="Ej: Matrícula..." oninput="aplicarFiltrosTabla(DATOS_GLOBALES)">
             </div>
         </div>
 
