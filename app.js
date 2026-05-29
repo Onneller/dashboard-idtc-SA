@@ -112,8 +112,8 @@ function formatoEntero(valor) {
 function cargarKPIs(datos) {
     let intTotal = 0, extTotal = 0;
     datos.forEach(item => {
-        intTotal += Number(item.TOTAL_INTERNO || 0);
-        extTotal += Number(item.VALOR_CUPL_PAGADO || 0);
+        intTotal += Number(item.TOTAL_INTERNO || item.total_interno || 0);
+        extTotal += Number(item.VALOR_CUPL_PAGADO || item.valor_cupl_pagado || 0);
     });
     document.getElementById("interno").innerText = formatoMoneda(intTotal);
     document.getElementById("externo").innerText = formatoMoneda(extTotal);
@@ -126,7 +126,7 @@ function cargarKPIsParqueAutomotor(datos) {
     const tAutos = ["Matrícula Particular y Oficial", "Matrícula Público", "Radicación Matricula 4 Llantas o más", "Radicación Cuenta Automovil", "Matrícula Particular y Oficial Pignorado"];
 
     datos.forEach(item => {
-        const t = (item.NOMBRE_TRAMITE || "").trim().replace(/"/g, "");
+        const t = (item.NOMBRE_TRAMITE || item.nombre_tramite || "").trim().replace(/"/g, "");
         if (tMotos.some(m => t.toLowerCase() === m.toLowerCase())) motos++;
         else if (tAutos.some(a => t.toLowerCase() === a.toLowerCase())) autos++;
     });
@@ -161,8 +161,8 @@ function crearGraficosMensuales(datos) {
         const label = f.toLocaleString("es-CO", { month: "short", year: "numeric" });
 
         if (!meses[key]) meses[key] = { label, gen: 0, int: 0, ext: 0 };
-        const i = Number(item.TOTAL_INTERNO || 0);
-        const e = Number(item.VALOR_CUPL_PAGADO || 0);
+        const i = Number(item.TOTAL_INTERNO || item.total_interno || 0);
+        const e = Number(item.VALOR_CUPL_PAGADO || item.valor_cupl_pagado || 0);
         meses[key].gen += (i + e);
         meses[key].int += i;
         meses[key].ext += e;
@@ -192,9 +192,7 @@ function crearGraficosMensuales(datos) {
         xaxis: { categories: cats }, colors: ['#1D4ED8']
     }).render();
 
-    const contExtOld = document.querySelector("#graficoMensualExternal");
-    if (contExtOld) contExtOld.innerHTML = "";
-
+    // CORREGIDO: Se eliminó el bloque duplicado que rompía el código aquí
     const contExt = document.querySelector("#graficoMensualExterno");
     if (contExt) {
         contExt.innerHTML = "";
@@ -209,9 +207,7 @@ function crearGraficosMensuales(datos) {
 function crearGraficosDeTramites(datos) {
     const tipos = {};
     datos.forEach(item => {
-        // Tolerancia a mayúsculas o minúsculas del Excel
-        const t = item.TIPO_TRAMITE || item.tipo_tramite || item.Tipo || 'SIN CLASIFICAR';
-        
+        const t = item.TIPO_TRAMITE || item.tipo_tramite || 'SIN CLASIFICAR';
         if (!tipos[t]) tipos[t] = { total: 0, cantidad: 0 };
         
         const i = Number(item.TOTAL_INTERNO || item.total_interno || 0);
@@ -318,29 +314,6 @@ function crearCaracterizacionDeTramites(datos) {
             tooltip: { y: { formatter: (v) => formatoEntero(v) + " Ejecuciones" } }
         }).render();
     }
-
-    const contenedorRec = document.querySelector("#graficoTramitesRecaudoMonto");
-    if (contenedorRec) {
-        contenedorRec.innerHTML = "";
-        new ApexCharts(contenedorRec, {
-            ...opcionesBase,
-            chart: { type: 'bar', height: alturaDinamica, toolbar: { show: true } },
-            colors: ['#009027'], 
-            series: [{
-                name: 'Recaudo Total ($)',
-                data: ordenadosPorRecaudo.map(name => estadisticasTramites[name].recaudoTotal)
-            }],
-            xaxis: { categories: ordenadosPorRecaudo, labels: { formatter: (v) => formatoMoneda(v) } },
-            dataLabels: {
-                enabled: true,
-                formatter: (val) => formatoMoneda(val),
-                style: { colors: ['#0f172a'], fontSize: '11px', fontWeight: '600' },
-                offsetX: 40
-            },
-            tooltip: { y: { formatter: (v) => formatoMoneda(v) + " COP" } }
-        }).render();
-    }
-}
 
     const contenedorRec = document.querySelector("#graficoTramitesRecaudoMonto");
     if (contenedorRec) {
