@@ -216,47 +216,109 @@ function crearGraficosMensuales(datos) {
 }
 
 function crearGraficosDeTramites(datos) {
-    const tipos = {};
+    const estadisticasTramites = {};
+
+    // 1. Agrupar de forma estricta por NOMBRE_TRAMITE (Columna F)
     datos.forEach(item => {
-        const t = item.TIPO_TRAMITE || 'SIN CLASIFICAR';
-        if (!tipos[t]) tipos[t] = { total: 0, cantidad: 0, int: 0, ext: 0 };
-        const i = Number(item.TOTAL_INTERNO || 0);
-        const e = Number(item.VALOR_CUPL_PAGADO || 0);
-        tipos[t].total += (i + e);
-        tipos[t].int += i;
-        tipos[t].ext += e;
-        tipos[t].cantidad++;
+        // Limpiamos el texto de comillas o espacios fantasmas
+        const nombre = (item.NOMBRE_TRAMITE || "SIN NOMBRE").trim().replace(/"/g, "");
+        
+        if (!estadisticasTramites[nombre]) {
+            estadisticasTramites[nombre] = {
+                cantidad: 0,
+                recaudoTotal: 0
+            };
+        }
+
+        const intVal = Number(item.TOTAL_INTERNO || 0);
+        const extVal = Number(item.VALOR_CUPL_PAGADO || 0);
+
+        estadisticasTramites[nombre].cantidad += 1; // Cuenta de veces ejecutado
+        estadisticasTramites[nombre].recaudoTotal += (intVal + extVal); // Suma total de dinero
     });
 
-    const labels = Object.keys(tipos);
+    // 2. Convertir en arreglos y ordenar para mostrar los más importantes (Top)
+    const listaTramites = Object.keys(estadisticasTramites);
+    
+    // Ordenar por cantidad (Los más realizados)
+    const ordenadosPorCantidad = [...listaTramites].sort((a, b) => estadisticasTramites[b].cantidad - estadisticasTramites[a].cantidad);
+    
+    // Ordenar por dinero (Los que más recaudan)
+    const ordenadosPorRecaudo = [...listaTramites].sort((a, b) => estadisticasTramites[b].recaudoTotal - estadisticasTramites[a].recaudoTotal);
 
-    document.querySelector("#graficoTramitesDonut").innerHTML = "";
-    new ApexCharts(document.querySelector("#graficoTramitesDonut"), {
-        chart: { type: 'donut', height: 350, fontFamily: 'Segoe UI' },
-        labels: labels,
-        series: labels.map(l => tipos[l].total),
-        colors: ['#00B029', '#1D4ED8', '#FF0793'], 
-        tooltip: { y: { formatter: (v) => formatoMoneda(v) } },
-        legend: { position: 'bottom' }
-    }).render();
+    // Configuración de fuentes y barras limpias
+    const opcionesBase = {
+        fontFamily: 'Segoe UI, Arial, sans-serif',
+        plotOptions: {
+            bar: {
+                borderRadius: 6,
+                horizontal: true, // Barras horizontales para que los nombres largos se lean perfecto
+                barHeight: '70%',
+                dataLabels: { position: 'top' }
+            }
+        },
+        grid: {
+            borderColor: '#f1f5f9',
+            xaxis: { lines: { show: true } }
+        }
+    };
 
-    document.querySelector("#graficoTramitesBarras").innerHTML = "";
-    new ApexCharts(document.querySelector("#graficoTramitesBarras"), {
-        chart: { type: 'bar', height: 380, fontFamily: 'Segoe UI' },
-        series: [
-            { name: 'Cant. Trámites', data: labels.map(l => tipos[l].cantidad) },
-            { name: 'Recaudo Interno', data: labels.map(l => tipos[l].int) },
-            { name: 'Recaudo Externo', data: labels.map(l => tipos[l].ext) }
-        ],
-        xaxis: { categories: labels },
-        yaxis: [
-            { title: { text: "Cantidad" }, labels: { formatter: (v) => formatoEntero(v) } },
-            { opposite: true, title: { text: "Valor COP" }, labels: { formatter: (v) => formatoMoneda(v) } }
-        ],
-        tooltip: { y: { formatter: (v, { seriesIndex }) => seriesIndex === 0 ? formatoEntero(v) : formatoMoneda(v) } }
-    }).render();
+    // ========================================================
+    // GRÁFICO 1: LOS TRÁMITES MÁS REALIZADOS (CANTIDAD DE VECES)
+    // ========================================================
+    const contenedorCant = document.querySelector("#graficoTramitesCantidad");
+    if (contenedorCant) {
+        contenedorCant.innerHTML = "";
+        new ApexCharts(contenedorCant, {
+            ...opcionesBase,
+            chart: { type: 'bar', height: 450, toolbar: { show: true } },
+            colors: ['#1D4ED8'], // Azul operativo
+            series: [{
+                name: 'Cantidad de Trámites',
+                data: ordenadosPorCantidad.map(name => estadisticasTramites[name].cantidad)
+            }],
+            xaxis: {
+                categories: ordenadosPorCantidad,
+                labels: { formatter: (v) => formatoEntero(v) }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: (val) => formatoEntero(val),
+                style: { colors: ['#0f172a'], fontSize: '12px', fontWeight: '600' },
+                offsetX: 30
+            },
+            tooltip: { y: { formatter: (v) => formatoEntero(v) + " Ejecuciones" } }
+        }).render();
+    }
+
+    // ========================================================
+    // GRÁFICO 2: LOS TRÁMITES QUE MÁS RECAUDAN (MONTO DINERO)
+    // ========================================================
+    const contenedorRec = document.querySelector("#graficoTramitesRecaudoMonto");
+    if (contenedorRec) {
+        contenedorRec.innerHTML = "";
+        new ApexCharts(contenedorRec, {
+            ...opcionesBase,
+            chart: { type: 'bar', height: 450, toolbar: { show: true } },
+            colors: ['#009027'], // Verde financiero
+            series: [{
+                name: 'Recaudo Total ($)',
+                data: ordenadosPorRecaudo.map(name => estadisticasTramites[name].recaudoTotal)
+            }],
+            xaxis: {
+                categories: ordenadosPorRecaudo,
+                labels: { formatter: (v) => formatoMoneda(v) }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: (val) => formatoMoneda(val),
+                style: { colors: ['#0f172a'], fontSize: '11px', fontWeight: '600' },
+                offsetX: 45
+            },
+            tooltip: { y: { formatter: (v) => formatoMoneda(v) + " COP" } }
+        }).render();
+    }
 }
-
 function aplicarFiltrosTabla(datosLimpios) {
     const datosOrigen = datosLimpios || DATOS_GLOBALES;
     const filtroMesAnio = document.getElementById("filtroMesAnio").value;
