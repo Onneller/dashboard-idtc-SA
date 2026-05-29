@@ -1,5 +1,5 @@
 const CONFIG = {
-    GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxpwI9uL9Wadwk1XSsxAVCiCKv_xBKbszh0Do5YnMNOAAKhWnxFGkcN2qYo6DB8UAne3w/exec",
+    GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzo2bp7fBx_FfnF25QG0UMJoD3Rg9EcvFRWZFlz0HOdkwMxzghgeJuS1yTGht0t-4X7cw/exec",
     MODO_PRIVADO: false
     // ========================================================
     // INTERRUPTOR DE SEGURIDAD MAESTRO
