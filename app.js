@@ -8,7 +8,6 @@ function obtenerDatos() {
 }
 
 function procesarDatos(datos) {
-    // Si el script de Google nos envía el texto de bloqueo, activamos la pantalla falsa
     if (datos === "NOT_AVAILABLE" || !datos) {
         mostrarPaginaNoDisponible();
         return;
@@ -22,7 +21,6 @@ function procesarDatos(datos) {
     renderizarDashboard();
 }
 
-// Esta función borra todo el dashboard y dibuja un error de internet falso
 function mostrarPaginaNoDisponible() {
     document.body.innerHTML = `
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f7f9fa; font-family: 'Segoe UI', Arial, sans-serif; color: #5f6368; text-align: center; padding: 20px;">
@@ -37,27 +35,22 @@ function mostrarPaginaNoDisponible() {
 }
 
 function renderizarDashboard() {
-    // 1. FILTRADO INTELIGENTE: SEPARACIÓN DE REGISTROS VS MÓDULOS MENSUALES REALES
     let datosLimpios = DATOS_GLOBALES.filter(item => {
         if (!item || !item.TIMESTAMP) return false;
 
-        // Validar y parsear la fecha de forma segura
         const f = new Date(item.TIMESTAMP);
         if (isNaN(f)) return false;
 
         const anioRegistro = f.getFullYear();
         const mesIdx = f.getMonth(); 
 
-        // Rango de vigencia dinámico: Permitimos 2025 (Nov-Dic) y cualquier mes/año hacia adelante (2026, 2027, etc.)
         if (anioRegistro === 2025 && mesIdx < 10) {
-            return false; // Descarta meses anteriores a Noviembre de 2025
+            return false;
         }
 
-        // --- LEY DE CONTROL DE LOGS EXCLUSIVA ---
         const consecutivo = String(item.CONSECUTIVO_INTERNO || "").trim();
         const email = String(item.USUARIO_EMAIL || "").trim();
 
-        // REGLA DE ORO AUTOMÁTICA: Si el campo es EXACTAMENTE "Logs" se descarta.
         if (consecutivo.toLowerCase() === "logs" || email.toLowerCase() === "logs") {
             return false;
         }
@@ -66,7 +59,6 @@ function renderizarDashboard() {
             return false;
         }
 
-        // Validación de consistencia mínima: Evitar celdas fantasmas o corruptas
         if (!item.NOMBRE_TRAMITE || item.NOMBRE_TRAMITE === "" || item.NOMBRE_TRAMITE === "undefined") {
             return false;
         }
@@ -74,7 +66,6 @@ function renderizarDashboard() {
         return true;
     });
 
-    // 2. CONFIGURACIÓN DINÁMICA DEL TEXTO INFORMATIVO DE PERIODOS REALES
     let textoPeriodo = "Histórico Vigencias (2025 Nov-Dic / Continuo)";
     
     if (ANIO_FILTRADO === 2025) {
@@ -85,12 +76,10 @@ function renderizarDashboard() {
         textoPeriodo = `Año ${ANIO_FILTRADO}`;
     }
     
-    // Inyectar etiquetas descriptivas en la interfaz
     const tagPeriodo = document.getElementById("tagPeriodo");
     if (tagPeriodo) tagPeriodo.innerText = textoPeriodo;
     document.querySelectorAll(".txt-periodo").forEach(el => el.innerText = textoPeriodo);
 
-    // 3. FILTRAR POR EL AÑO SELECCIONADO EN EL MENÚ DE NAVEGACIÓN
     let datosFinales = datosLimpios;
     if (ANIO_FILTRADO !== 'todos') {
         datosFinales = datosLimpios.filter(item => {
@@ -99,18 +88,11 @@ function renderizarDashboard() {
         });
     }
 
-    // 4. RE-RENDERIZAR COMPONENTES CON LA DATA PURIFICADA
     cargarKPIs(datosFinales);
     cargarKPIsParqueAutomotor(datosFinales);
     crearGraficosMensuales(datosFinales);
-    
-    // Graficador 1: Procesa tipos de trámites RNA/RNC de forma general
     crearGraficosDeTramites(datosFinales);
-    
-    // Graficador 2: Procesa la caracterización exhaustiva de la Columna F por nombre individual
     crearCaracterizacionDeTramites(datosFinales);
-    
-    // CORREGIDO: Ahora usa la variable global del filtro de tabla sin causar errores
     aplicarFiltrosTabla(datosFinales); 
 }
 
@@ -210,19 +192,9 @@ function crearGraficosMensuales(datos) {
         xaxis: { categories: cats }, colors: ['#1D4ED8']
     }).render();
 
-// REEMPLAZO SEGURO EN TU FUNCIÓN crearGraficosMensuales()
-const contExtOld = document.querySelector("#graficoMensualExternal");
-if (contExtOld) contExtOld.innerHTML = "";
+    const contExtOld = document.querySelector("#graficoMensualExternal");
+    if (contExtOld) contExtOld.innerHTML = "";
 
-const contExt = document.querySelector("#graficoMensualExterno");
-if (contExt) {
-    contExt.innerHTML = "";
-    new ApexCharts(contExt, {
-        ...confBase, chart: { ...confBase.chart, type: 'area' },
-        series: [{ name: 'Externo RUNT', data: ordenados.map(k => meses[k].ext) }],
-        xaxis: { categories: cats }, colors: ['#FF0793']
-    }).render();
-}
     const contExt = document.querySelector("#graficoMensualExterno");
     if (contExt) {
         contExt.innerHTML = "";
@@ -234,7 +206,6 @@ if (contExt) {
     }
 }
 
-// SECCIÓN ORIGINAL REPARADA: PINTA EL GRAFICO DE DONA RNA/RNC GENERAL
 function crearGraficosDeTramites(datos) {
     const tipos = {};
     datos.forEach(item => {
@@ -262,25 +233,33 @@ function crearGraficosDeTramites(datos) {
             legend: { position: 'bottom' }
         }).render();
     }
+
+    const contenedorBarras = document.querySelector("#graficoTramitesBarras");
+    if (contenedorBarras) {
+        contenedorBarras.innerHTML = "";
+        new ApexCharts(contenedorBarras, {
+            chart: { type: 'bar', height: 350, fontFamily: 'Segoe UI' },
+            series: [
+                { name: 'Cantidad', data: labels.map(l => tipos[l].cantidad) },
+                { name: 'Total ($)', data: labels.map(l => tipos[l].total) }
+            ],
+            xaxis: { categories: labels },
+            colors: ['#1D4ED8', '#009027']
+        }).render();
+    }
 }
 
-// NUEVA FUNCIÓN COMPLETA: CARACTERIZA CADA TRÁMITE DE LA COLUMNA F UNO POR UNO
 function crearCaracterizacionDeTramites(datos) {
     const estadisticasTramites = {};
 
     datos.forEach(item => {
         const nombre = (item.NOMBRE_TRAMITE || "SIN NOMBRE").trim().replace(/"/g, "");
-        
-        // Ignorar filas corruptas o vacías
         if (!nombre || nombre === "" || nombre === "undefined" || nombre.toLowerCase() === "nombre_tramite") {
             return;
         }
 
         if (!estadisticasTramites[nombre]) {
-            estadisticasTramites[nombre] = {
-                cantidad: 0,
-                recaudoTotal: 0
-            };
+            estadisticasTramites[nombre] = { cantidad: 0, recaudoTotal: 0 };
         }
 
         const intVal = Number(item.TOTAL_INTERNO || 0);
@@ -291,14 +270,11 @@ function crearCaracterizacionDeTramites(datos) {
     });
 
     const listaTramites = Object.keys(estadisticasTramites);
-
     if (listaTramites.length === 0) return;
 
-    // Ordenar rankings de mayor a menor frecuencia e ingresos
     const ordenadosPorCantidad = [...listaTramites].sort((a, b) => estadisticasTramites[b].cantidad - estadisticasTramites[a].cantidad);
     const ordenadosPorRecaudo = [...listaTramites].sort((a, b) => estadisticasTramites[b].recaudoTotal - estadisticasTramites[a].recaudoTotal);
 
-    // Ajustes globales para visualización horizontal clara de textos largos
     const opcionesBase = {
         fontFamily: 'Segoe UI, Arial, sans-serif',
         plotOptions: {
@@ -312,12 +288,8 @@ function crearCaracterizacionDeTramites(datos) {
         grid: { borderColor: '#f1f5f9', xaxis: { lines: { show: true } } }
     };
 
-    // Altura calculada dinámicamente según cuántos trámites existan en la Columna F
     const alturaDinamica = listaTramites.length * 35 + 100;
 
-    // ========================================================
-    // GRÁFICO NUEVO OPERATIVO: TRÁMITES MÁS REALIZADOS
-    // ========================================================
     const contenedorCant = document.querySelector("#graficoTramitesCantidad");
     if (contenedorCant) {
         contenedorCant.innerHTML = "";
@@ -329,10 +301,7 @@ function crearCaracterizacionDeTramites(datos) {
                 name: 'Cantidad de Trámites',
                 data: ordenadosPorCantidad.map(name => estadisticasTramites[name].cantidad)
             }],
-            xaxis: {
-                categories: ordenadosPorCantidad,
-                labels: { formatter: (v) => formatoEntero(v) }
-            },
+            xaxis: { categories: ordenadosPorCantidad, labels: { formatter: (v) => formatoEntero(v) } },
             dataLabels: {
                 enabled: true,
                 formatter: (val) => formatoEntero(val),
@@ -343,9 +312,6 @@ function crearCaracterizacionDeTramites(datos) {
         }).render();
     }
 
-    // ========================================================
-    // GRÁFICO NUEVO OPERATIVO: TRÁMITES CON MÁS INGRESOS
-    // ========================================================
     const contenedorRec = document.querySelector("#graficoTramitesRecaudoMonto");
     if (contenedorRec) {
         contenedorRec.innerHTML = "";
@@ -357,10 +323,7 @@ function crearCaracterizacionDeTramites(datos) {
                 name: 'Recaudo Total ($)',
                 data: ordenadosPorRecaudo.map(name => estadisticasTramites[name].recaudoTotal)
             }],
-            xaxis: {
-                categories: ordenadosPorRecaudo,
-                labels: { formatter: (v) => formatoMoneda(v) }
-            },
+            xaxis: { categories: ordenadosPorRecaudo, labels: { formatter: (v) => formatoMoneda(v) } },
             dataLabels: {
                 enabled: true,
                 formatter: (val) => formatoMoneda(val),
