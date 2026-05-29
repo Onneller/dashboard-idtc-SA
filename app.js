@@ -110,7 +110,8 @@ function renderizarDashboard() {
     // Graficador 2: Procesa la caracterización exhaustiva de la Columna F por nombre individual
     crearCaracterizacionDeTramites(datosFinales);
     
-    aplicarFiltrosTabla(datosLimpios); 
+    // CORREGIDO: Ahora usa la variable global del filtro de tabla sin causar errores
+    aplicarFiltrosTabla(datosFinales); 
 }
 
 function formatoMoneda(valor) {
@@ -209,12 +210,16 @@ function crearGraficosMensuales(datos) {
         xaxis: { categories: cats }, colors: ['#1D4ED8']
     }).render();
 
-    document.querySelector("#graficoMensualExterno").innerHTML = "";
-    new ApexCharts(document.querySelector("#graficoMensualExterno"), {
-        ...confBase, chart: { ...confBase.chart, type: 'area' },
-        series: [{ name: 'Externo RUNT', data: ordenados.map(k => meses[k].ext) }],
-        xaxis: { categories: cats }, colors: ['#FF0793']
-    }).render();
+    document.querySelector("#graficoMensualExternal").innerHTML = ""; // Corregido ID
+    const contExt = document.querySelector("#graficoMensualExterno");
+    if (contExt) {
+        contExt.innerHTML = "";
+        new ApexCharts(contExt, {
+            ...confBase, chart: { ...confBase.chart, type: 'area' },
+            series: [{ name: 'Externo RUNT', data: ordenados.map(k => meses[k].ext) }],
+            xaxis: { categories: cats }, colors: ['#FF0793']
+        }).render();
+    }
 }
 
 // SECCIÓN ORIGINAL REPARADA: PINTA EL GRAFICO DE DONA RNA/RNC GENERAL
@@ -355,14 +360,13 @@ function crearCaracterizacionDeTramites(datos) {
     }
 }
 
-function aplicarFiltrosTabla(datosLimpios) {
-    const datosOrigen = datosLimpios || DATOS_GLOBALES;
-    const filtroMesAnio = document.getElementById("filtroMesAnio").value;
-    const buscarTexto = document.getElementById("buscarTramite").value.toLowerCase();
+function aplicarFiltrosTabla(datosOrigen) {
     const tbody = document.querySelector("#tablaDatos tbody");
     if (!tbody) return;
     
     tbody.innerHTML = "";
+    const filtroMesAnio = document.getElementById("filtroMesAnio") ? document.getElementById("filtroMesAnio").value : "";
+    const buscarTexto = document.getElementById("buscarTramite") ? document.getElementById("buscarTramite").value.toLowerCase() : "";
 
     let datosAMostrar = datosOrigen.filter(item => {
         let cumpleFecha = true, cumpleTexto = true;
