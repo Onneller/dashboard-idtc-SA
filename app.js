@@ -8,10 +8,24 @@ function obtenerDatos() {
 }
 
 function procesarDatos(datos) {
-    if (datos === "NOT_AVAILABLE" || !datos) {
-        mostrarPaginaNoDisponible();
+    // Si el modo privado está encendido (true) y la respuesta es de bloqueo
+    if (CONFIG.MODO_PRIVADO === true) {
+        if (datos === "NOT_AVAILABLE" || !datos || (typeof datos === "string" && datos.includes("NOT_AVAILABLE"))) {
+            mostrarPaginaNoDisponible();
+            return;
+        }
+    }
+
+    // Si está en modo público (false) o si pasó la validación privada con éxito:
+    if (!datos || datos.length === 0 || datos === "NOT_AVAILABLE") {
+        console.error("No se recibieron datos de la API o la hoja está vacía.");
+        // Si estás en modo público y llega vacío, puede ser falta de permisos en el Apps Script
         return;
     }
+    
+    DATOS_GLOBALES = datos;
+    renderizarDashboard();
+}
 
     if (datos.length === 0) {
         console.error("No se recibieron datos de la API");
