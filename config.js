@@ -1,9 +1,9 @@
 const CONFIG = {
-    GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzxazQfBR7HL7oD6fKL6UVNSLCjjFQWa0x_eI5ybHlo1zNUNmQkprhsVBp89zFVIECoQg/exec",
+    GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxpwI9uL9Wadwk1XSsxAVCiCKv_xBKbszh0Do5YnMNOAAKhWnxFGkcN2qYo6DB8UAne3w/exec",
+    MODO_PRIVADO: true
     // ========================================================
     // INTERRUPTOR DE SEGURIDAD MAESTRO
     // true  = Modo Privado (Activa lista de correos y camuflaje 404)
     // false = Modo Público (Cualquiera en internet puede ver las cifras)
     // ========================================================
-    MODO_PRIVADO: false 
 };
