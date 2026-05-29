@@ -396,4 +396,38 @@ function filtrarPorAnio(anio) {
     renderizarDashboard();
 }
 
+// Función para abrir/cerrar el menú hamburguesa
+function toggleMenu() {
+    const toggleBtn = document.querySelector('.menu-toggle');
+    const menuWrapper = document.getElementById('navMenuWrapper');
+    
+    if (toggleBtn && menuWrapper) {
+        toggleBtn.classList.toggle('open');
+        menuWrapper.classList.toggle('open');
+    }
+}
+
+// Cierra el menú móvil de manera automática tras realizar una acción
+function cerrarMenuMovil() {
+    const toggleBtn = document.querySelector('.menu-toggle');
+    const menuWrapper = document.getElementById('navMenuWrapper');
+    
+    if (toggleBtn && toggleBtn.classList.contains('open')) {
+        toggleBtn.classList.remove('open');
+        menuWrapper.classList.remove('open');
+    }
+}
+
+// Enlace interceptor para cambiar de sección y cerrar el menú en móvil
+function cambiarSeccionResponsive(seccionId, elementoDestinoId) {
+    cambiarSeccion(seccionId, elementoDestinoId);
+    cerrarMenuMovil();
+}
+
+// Enlace interceptor para aplicar el filtro de año y cerrar el menú en móvil
+function filtrarPorAnioResponsive(anio) {
+    filtrarPorAnio(anio);
+    cerrarMenuMovil();
+}
+
 obtenerDatos();
