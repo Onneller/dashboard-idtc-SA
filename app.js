@@ -8,12 +8,32 @@ function obtenerDatos() {
 }
 
 function procesarDatos(datos) {
-    if (!datos || datos.length === 0) {
+    // Si el script de Google nos envía el texto de bloqueo, activamos la pantalla falsa
+    if (datos === "NOT_AVAILABLE" || !datos) {
+        mostrarPaginaNoDisponible();
+        return;
+    }
+
+    if (datos.length === 0) {
         console.error("No se recibieron datos de la API");
         return;
     }
     DATOS_GLOBALES = datos;
     renderizarDashboard();
+}
+
+// Esta función borra todo el dashboard y dibuja un error de internet falso
+function mostrarPaginaNoDisponible() {
+    document.body.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f7f9fa; font-family: 'Segoe UI', Arial, sans-serif; color: #5f6368; text-align: center; padding: 20px;">
+            <div style="font-size: 80px; font-weight: bold; color: #dadce0; margin-bottom: 10px;">404</div>
+            <h1 style="font-size: 24px; color: #202124; margin-bottom: 15px; font-weight: 500;">Esta página no está disponible</h1>
+            <p style="font-size: 14px; max-width: 400px; margin-bottom: 25px; line-height: 1.6;">Es posible que el enlace esté roto, que la página se haya eliminado o que no tengas los permisos de red del servidor local necesarios.</p>
+            <a href="https://www.google.com" style="text-decoration: none; background-color: #1a73e8; color: white; padding: 10px 24px; border-radius: 4px; font-weight: 500; font-size: 14px; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);">Ir a la página de inicio</a>
+        </div>
+    `;
+    document.body.style.margin = "0";
+    document.body.style.background = "#f7f9fa";
 }
 
 function renderizarDashboard() {
