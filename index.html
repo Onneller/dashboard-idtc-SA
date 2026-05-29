@@ -24,23 +24,31 @@
         <img src="imagenes/logo_idtracesar.png" alt="Logo IDTC">
     </div>
 
-    <ul>
-        <li><a href="#" class="nav-link active" onclick="cambiarSeccion('inicio', 'inicio')">Inicio</a></li>
-        <li class="dropdown">
-            <a href="#">Recaudo por Año</a>
-            <ul class="dropdown-content">
-                <li><a href="#" onclick="filtrarPorAnio(2025)">Año 2025</a></li>
-                <li><a href="#" onclick="filtrarPorAnio(2026)">Año 2026</a></li>
-                <li><a href="#" onclick="filtrarPorAnio('todos')">Histórico Vigencias</a></li>
-            </ul>
-        </li>
-        <li><a href="#" class="nav-link" onclick="cambiarSeccion('seccion-parque', 'graficoParqueBarras')">Parque Automotor</a></li>
-        <li><a href="#" class="nav-link" onclick="cambiarSeccion('seccion-tramites', 'graficoTramitesDonut')">Recaudo OT (RNA/RNC)</a></li>
-        <li><a href="#" class="nav-link" onclick="cambiarSeccion('seccion-tramites', 'seccion-tramites')">Estadísticas Trámites</a></li>
-        <li><a href="#" class="nav-link" onclick="cambiarSeccion('seccion-reportes', 'seccion-reportes')">Reportes (RUNT / Filtros)</a></li>
-    </ul>
+    <button class="menu-toggle" aria-label="Abrir menú" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
 
-    <div class="nav-logo">
+    <div class="nav-menu-wrapper" id="navMenuWrapper">
+        <ul>
+            <li><a href="#" class="nav-link active" onclick="cambiarSeccionResponsive('inicio', 'inicio')">Inicio</a></li>
+            <li class="dropdown">
+                <a href="#">Recaudo por Año</a>
+                <ul class="dropdown-content">
+                    <li><a href="#" onclick="filtrarPorAnioResponsive(2025)">Año 2025</a></li>
+                    <li><a href="#" onclick="filtrarPorAnioResponsive(2026)">Año 2026</a></li>
+                    <li><a href="#" onclick="filtrarPorAnioResponsive('todos')">Histórico Vigencias</a></li>
+                </ul>
+            </li>
+            <li><a href="#" class="nav-link" onclick="cambiarSeccionResponsive('seccion-parque', 'graficoParqueBarras')">Parque Automotor</a></li>
+            <li><a href="#" class="nav-link" onclick="cambiarSeccionResponsive('seccion-tramites', 'graficoTramitesDonut')">Recaudo OT (RNA/RNC)</a></li>
+            <li><a href="#" class="nav-link" onclick="cambiarSeccionResponsive('seccion-tramites', 'seccion-tramites')">Estadísticas Trámites</a></li>
+            <li><a href="#" class="nav-link" onclick="cambiarSeccionResponsive('seccion-reportes', 'seccion-reportes')">Reportes (RUNT / Filtros)</a></li>
+        </ul>
+    </div>
+
+    <div class="nav-logo nav-logo-right">
         <img src="imagenes/logo_gober.png" alt="Logo Gobernación">
     </div>
 </nav>
