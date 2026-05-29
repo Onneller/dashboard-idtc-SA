@@ -209,13 +209,15 @@ function crearGraficosMensuales(datos) {
 function crearGraficosDeTramites(datos) {
     const tipos = {};
     datos.forEach(item => {
-        const t = item.TIPO_TRAMITE || 'SIN CLASIFICAR';
-        if (!tipos[t]) tipos[t] = { total: 0, cantidad: 0, int: 0, ext: 0 };
-        const i = Number(item.TOTAL_INTERNO || 0);
-        const e = Number(item.VALOR_CUPL_PAGADO || 0);
+        // Tolerancia a mayúsculas o minúsculas del Excel
+        const t = item.TIPO_TRAMITE || item.tipo_tramite || item.Tipo || 'SIN CLASIFICAR';
+        
+        if (!tipos[t]) tipos[t] = { total: 0, cantidad: 0 };
+        
+        const i = Number(item.TOTAL_INTERNO || item.total_interno || 0);
+        const e = Number(item.VALOR_CUPL_PAGADO || item.valor_cupl_pagado || 0);
+        
         tipos[t].total += (i + e);
-        tipos[t].int += i;
-        tipos[t].ext += e;
         tipos[t].cantidad++;
     });
 
@@ -244,7 +246,12 @@ function crearGraficosDeTramites(datos) {
                 { name: 'Total ($)', data: labels.map(l => tipos[l].total) }
             ],
             xaxis: { categories: labels },
-            colors: ['#1D4ED8', '#009027']
+            yaxis: [
+                { title: { text: "Cantidad" } },
+                { opposite: true, title: { text: "Recaudo COP" }, labels: { formatter: (v) => formatoMoneda(v) } }
+            ],
+            colors: ['#1D4ED8', '#009027'],
+            tooltip: { y: { formatter: (v, { seriesIndex }) => seriesIndex === 0 ? formatoEntero(v) : formatoMoneda(v) } }
         }).render();
     }
 }
@@ -253,7 +260,7 @@ function crearCaracterizacionDeTramites(datos) {
     const estadisticasTramites = {};
 
     datos.forEach(item => {
-        const nombre = (item.NOMBRE_TRAMITE || "SIN NOMBRE").trim().replace(/"/g, "");
+        const nombre = (item.NOMBRE_TRAMITE || item.nombre_tramite || "SIN NOMBRE").trim().replace(/"/g, "");
         if (!nombre || nombre === "" || nombre === "undefined" || nombre.toLowerCase() === "nombre_tramite") {
             return;
         }
@@ -262,8 +269,8 @@ function crearCaracterizacionDeTramites(datos) {
             estadisticasTramites[nombre] = { cantidad: 0, recaudoTotal: 0 };
         }
 
-        const intVal = Number(item.TOTAL_INTERNO || 0);
-        const extVal = Number(item.VALOR_CUPL_PAGADO || 0);
+        const intVal = Number(item.TOTAL_INTERNO || item.total_interno || 0);
+        const extVal = Number(item.VALOR_CUPL_PAGADO || item.valor_cupl_pagado || 0);
 
         estadisticasTramites[nombre].cantidad += 1; 
         estadisticasTramites[nombre].recaudoTotal += (intVal + extVal); 
@@ -288,7 +295,7 @@ function crearCaracterizacionDeTramites(datos) {
         grid: { borderColor: '#f1f5f9', xaxis: { lines: { show: true } } }
     };
 
-    const alturaDinamica = listaTramites.length * 35 + 100;
+    const alturaDinamica = Math.max(listaTramites.length * 35 + 100, 400);
 
     const contenedorCant = document.querySelector("#graficoTramitesCantidad");
     if (contenedorCant) {
@@ -311,6 +318,29 @@ function crearCaracterizacionDeTramites(datos) {
             tooltip: { y: { formatter: (v) => formatoEntero(v) + " Ejecuciones" } }
         }).render();
     }
+
+    const contenedorRec = document.querySelector("#graficoTramitesRecaudoMonto");
+    if (contenedorRec) {
+        contenedorRec.innerHTML = "";
+        new ApexCharts(contenedorRec, {
+            ...opcionesBase,
+            chart: { type: 'bar', height: alturaDinamica, toolbar: { show: true } },
+            colors: ['#009027'], 
+            series: [{
+                name: 'Recaudo Total ($)',
+                data: ordenadosPorRecaudo.map(name => estadisticasTramites[name].recaudoTotal)
+            }],
+            xaxis: { categories: ordenadosPorRecaudo, labels: { formatter: (v) => formatoMoneda(v) } },
+            dataLabels: {
+                enabled: true,
+                formatter: (val) => formatoMoneda(val),
+                style: { colors: ['#0f172a'], fontSize: '11px', fontWeight: '600' },
+                offsetX: 40
+            },
+            tooltip: { y: { formatter: (v) => formatoMoneda(v) + " COP" } }
+        }).render();
+    }
+}
 
     const contenedorRec = document.querySelector("#graficoTramitesRecaudoMonto");
     if (contenedorRec) {
