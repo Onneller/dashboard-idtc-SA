@@ -227,3 +227,151 @@ footer {
     .grid-parque { grid-template-columns: 1fr; }
     .footer-container { flex-direction: column; text-align: center; }
 }
+
+/* ========================================================
+   ESTILOS BASE PARA EL MENÚ HAMBURGUESA
+   ======================================================== */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1001;
+}
+
+.menu-toggle span {
+    width: 100%;
+    height: 3px;
+    background-color: #1e293b; /* Color de las barras */
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Animación al abrir menú */
+.menu-toggle.open span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+.menu-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+.menu-toggle.open span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+/* ========================================================
+   MEDIA QUERY: TABLETS Y MÓVILES (PANTALLAS < 992px)
+   ======================================================== */
+@media screen and (max-width: 992px) {
+    /* Ajustes del Header */
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+    }
+    header h1 { font-size: 18px !important; }
+    header p { font-size: 12px !important; }
+
+    /* Ajustes del Nav */
+    nav {
+        padding: 10px 20px !important;
+        justify-content: space-between;
+        position: relative;
+    }
+    .nav-logo-right {
+        display: none; /* Oculta el segundo logo en móvil para ahorrar espacio */
+    }
+    
+    .menu-toggle {
+        display: flex; /* Muestra el botón hamburguesa */
+    }
+
+    /* Transformación del menú en panel desplegable vertical */
+    .nav-menu-wrapper {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: #ffffff;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-in-out;
+        z-index: 1000;
+    }
+
+    .nav-menu-wrapper.open {
+        max-height: 500px; /* Despliega el menú */
+        overflow-y: auto;
+    }
+
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+        padding: 10px 0;
+    }
+
+    nav ul li {
+        width: 100%;
+    }
+
+    nav ul li a {
+        display: block;
+        padding: 12px 25px !important;
+        width: 100%;
+        box-sizing: border-box;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* Dropdown adaptado a pantallas táctiles */
+    .dropdown-content {
+        position: relative;
+        box-shadow: none;
+        background: #f8fafc;
+        display: none;
+        width: 100%;
+    }
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    /* Rediseño de Grillas a una sola columna */
+    .hero, .grid-parque {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+
+    .graficos-container {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+
+    .grafico-box {
+        padding: 15px !important;
+    }
+
+    /* Optimización de Tablas en celulares */
+    .contenedor-tabla-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+        font-size: 12px;
+    }
+    
+    th, td {
+        padding: 8px 10px !important;
+    }
+
+    /* Ajustes del Footer */
+    .footer-container {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+}
