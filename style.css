@@ -375,3 +375,90 @@ footer {
         text-align: center;
     }
 }
+
+/* ========================================================
+   MEDIA QUERY ACTUALIZADA: OPTIMIZACIÓN MÓVIL RADICAL
+   ======================================================== */
+@media screen and (max-width: 992px) {
+    
+    /* 1. Ocultar por completo el Header gigante en celular y tablet */
+    header {
+        display: none !important;
+    }
+
+    /* 2. Convertir el NAV en una barra fija/estática en la parte superior */
+    nav {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 60px !important; /* Altura compacta para móvil */
+        background: #ffffff !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+        padding: 0 20px !important;
+        box-sizing: border-box !important;
+        
+        /* Forzar la distribución: Logo a la izquierda, Hamburguesa a la derecha */
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        z-index: 9999 !important; /* Asegura que quede siempre por encima de los gráficos */
+    }
+
+    /* 3. Asegurar el comportamiento del Logo a la izquierda */
+    nav .nav-logo {
+        display: flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+    }
+    
+    nav .nav-logo img {
+        height: 45px !important; /* Tamaño adaptado a la barra móvil */
+        width: auto !important;
+    }
+
+    /* Ocultar el logo de la gobernación obligatoriamente en móvil */
+    .nav-logo-right {
+        display: none !important;
+    }
+
+    /* 4. Asegurar el botón Hamburguesa a la derecha */
+    .menu-toggle {
+        display: flex !important;
+        margin: 0 !important;
+        order: 2 !important; /* Lo empuja al extremo derecho si es necesario */
+    }
+
+    /* 5. Ajustar el despliegue del menú para que no se corte por el Nav Fijo */
+    .nav-menu-wrapper {
+        position: absolute !important;
+        top: 60px !important; /* Justo debajo de la barra fija */
+        left: 0 !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        transition: max-height 0.3s ease-in-out !important;
+        z-index: 9998 !important;
+    }
+
+    .nav-menu-wrapper.open {
+        max-height: 350px !important; /* Altura justa para los enlaces */
+    }
+
+    /* 6. COLCHÓN DE ESPACIO PARA LAS SECCIONES */
+    /* Como el Nav ahora está flotando fijo arriba, las secciones se subirían y quedarían tapadas. */
+    /* Añadimos un margen superior al contenedor activo para compensar los 60px del Nav */
+    .tab-content {
+        margin-top: 80px !important; /* Separación prudente para que empiece limpio abajo del Nav */
+        padding: 15px !important;
+    }
+
+    /* Rediseño de Grillas a una sola columna (Mantenemos tus ajustes fluidos) */
+    .hero, .grid-parque, .graficos-container {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+}
