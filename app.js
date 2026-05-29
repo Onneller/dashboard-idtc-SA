@@ -2,38 +2,18 @@ let DATOS_GLOBALES = [];
 let ANIO_FILTRADO = 'todos';
 
 function obtenerDatos() {
-    const modoParam = CONFIG.MODO_PRIVADO ? "privado" : "publico";
     const script = document.createElement('script');
-    
-    // Le inyectamos el parámetro '&modo=' dinámicamente a la URL
-    script.src = CONFIG.GOOGLE_SCRIPT_URL + '?callback=procesarDatos&modo=' + modoParam;
+    // Consumimos el script directamente de forma pública
+    script.src = CONFIG.GOOGLE_SCRIPT_URL + '?callback=procesarDatos';
     document.body.appendChild(script);
 }
 
 function procesarDatos(datos) {
-    // Si el modo privado está encendido (true) y la respuesta es de bloqueo
-    if (CONFIG.MODO_PRIVADO === true) {
-        if (datos === "NOT_AVAILABLE" || !datos || (typeof datos === "string" && datos.includes("NOT_AVAILABLE"))) {
-            mostrarPaginaNoDisponible();
-            return;
-        }
-    }
-
-    // Si está en modo público (false) o si pasó la validación privada con éxito:
     if (!datos || datos.length === 0 || datos === "NOT_AVAILABLE") {
         console.error("No se recibieron datos de la API o la hoja está vacía.");
-        // Si estás en modo público y llega vacío, puede ser falta de permisos en el Apps Script
         return;
     }
     
-    DATOS_GLOBALES = datos;
-    renderizarDashboard();
-}
-
-    if (datos.length === 0) {
-        console.error("No se recibieron datos de la API");
-        return;
-    }
     DATOS_GLOBALES = datos;
     renderizarDashboard();
 }
@@ -209,7 +189,6 @@ function crearGraficosMensuales(datos) {
         xaxis: { categories: cats }, colors: ['#1D4ED8']
     }).render();
 
-    // CORREGIDO: Se eliminó el bloque duplicado que rompía el código aquí
     const contExt = document.querySelector("#graficoMensualExterno");
     if (contExt) {
         contExt.innerHTML = "";
