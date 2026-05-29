@@ -173,31 +173,33 @@
     </div>
 </section>
 
-    <section id="seccion-tramites" class="tab-content dashboard-section" style="margin-top: 30px; padding: 20px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); display: none;">
+    <section id="seccion-tramites" class="tab-content dashboard-section" style="padding: 10px 0;">
     
-    <div class="section-header" style="margin-bottom: 20px; border-left: 4px solid #009027; padding-left: 10px;">
-        <h2 style="font-size: 18px; color: #1e293b; margin: 0; font-weight: 600;">Análisis Operativo por Tipos de Trámites</h2>
-        <p style="font-size: 12px; color: #64748b; margin: 5px 0 0 0;">Visualización del flujo, cantidad y montos de los trámites más ejecutados de la Sede</p>
+    <div class="periodo-badge" style="margin-left: 10px; margin-bottom: 20px;">
+        Período Visualizado: <span class="txt-periodo" style="color: #FF0793; font-weight: bold;">Histórico Vigencias</span>
     </div>
 
-    <div class="tramites-charts-grid" style="display: block; width: 100%;">
+    <div class="graficos-container" style="display: flex; flex-direction: column; gap: 35px; width: 100%;">
         
-        <div class="chart-card" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-            <h3 style="font-size: 14px; color: #334155; margin-top: 0; margin-bottom: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
-                📊 Participación en Recaudo por Tipo de Trámite
-            </h3>
-            <div id="graficoTramitesDonut" style="min-height: 350px;"></div>
+        <div class="grafico-box full-width" style="background: white; padding: 30px; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+            <div class="grafico-header" style="border-bottom: 1px solid #f3f4f6; padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 style="font-size: 18px; color: #1f2937; margin: 0; font-weight: 600;">📊 Ranking: Trámites Más Realizados (Frecuencia / Columna F)</h2>
+                <p style="font-size: 13px; color: #6b7280; margin: 5px 0 0 0;">Mide el volumen de operaciones evaluando la cantidad de veces que se procesa cada concepto.</p>
+            </div>
+            <div id="graficoTramitesCantidad"></div>
         </div>
 
-        <div class="chart-card" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px;">
-            <h3 style="font-size: 14px; color: #334155; margin-top: 0; margin-bottom: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
-                📈 Relación de Volúmenes: Cantidad Ejecutada y Valores Recaudados
-            </h3>
-            <div id="graficoTramitesBarras" style="min-height: 380px;"></div>
+        <div class="grafico-box full-width" style="background: white; padding: 30px; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+            <div class="grafico-header" style="border-bottom: 1px solid #f3f4f6; padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 style="font-size: 18px; color: #1f2937; margin: 0; font-weight: 600;">💰 Ranking: Trámites con Mayor Impacto en el Recaudo (Interno + Externo)</h2>
+                <p style="font-size: 13px; color: #6b7280; margin: 5px 0 0 0;">Identifica las fuentes de ingresos principales sumando el total recaudado por cada trámite.</p>
+            </div>
+            <div id="graficoTramitesRecaudoMonto"></div>
         </div>
 
     </div>
 </section>
+    
 <footer>
     <div class="footer-container">
         <div class="footer-logo">
