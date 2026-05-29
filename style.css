@@ -462,3 +462,29 @@ footer {
         gap: 15px !important;
     }
 }
+
+/* ========================================================
+   ESTILO PARA LA FIRMA DE DESARROLLO EN EL FOOTER
+   ======================================================== */
+.footer-info .powered-by {
+    margin-top: 15px !important;
+    font-size: 11px !important;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #94a3b8 !important; /* Gris suave elegante */
+}
+
+.footer-info .powered-by span {
+    font-weight: 700 !important;
+    color: #FF0793 !important; /* Resalta tu nombre con el rosa operativo del Dashboard */
+    position: relative;
+}
+
+/* Detalle visual en pantallas de escritorio */
+@media screen and (min-width: 993px) {
+    .footer-info .powered-by {
+        border-top: 1px solid #334155;
+        padding-top: 10px;
+        display: inline-block;
+    }
+}
