@@ -2,8 +2,11 @@ let DATOS_GLOBALES = [];
 let ANIO_FILTRADO = 'todos';
 
 function obtenerDatos() {
+    const modoParam = CONFIG.MODO_PRIVADO ? "privado" : "publico";
     const script = document.createElement('script');
-    script.src = CONFIG.GOOGLE_SCRIPT_URL + '?callback=procesarDatos';
+    
+    // Le inyectamos el parámetro '&modo=' dinámicamente a la URL
+    script.src = CONFIG.GOOGLE_SCRIPT_URL + '?callback=procesarDatos&modo=' + modoParam;
     document.body.appendChild(script);
 }
 
